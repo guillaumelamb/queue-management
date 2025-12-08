@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace QueueApp
+namespace QueueManagement.Core
 {
     /// <summary>
     /// High-performance queue (FIFO) implementation using a ring buffer.

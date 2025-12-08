@@ -1,9 +1,9 @@
 using System.Diagnostics;
-using QueueApp;
+using QueueManagement.Core;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace QueueApp.Tests;
+namespace QueueManagement.Tests;
 
 public class CustomQueueBenchmarkTests
 {

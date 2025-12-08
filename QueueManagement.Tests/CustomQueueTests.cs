@@ -1,7 +1,7 @@
-using QueueApp;
+using QueueManagement.Core;
 using Xunit;
 
-namespace QueueApp.Tests;
+namespace QueueManagement.Tests;
 
 public class CustomQueueTests
 {

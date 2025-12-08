@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace QueueApp
+namespace QueueManagement.Demo
 {
     /// <summary>
     /// Simulation of a mass registration event (like Ultramarin trail registration).

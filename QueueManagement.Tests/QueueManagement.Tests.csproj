@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileAttente.csproj" />
+    <ProjectReference Include="..\QueueManagement.csproj" />
   </ItemGroup>
 
 </Project>

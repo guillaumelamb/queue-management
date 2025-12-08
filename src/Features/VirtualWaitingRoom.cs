@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace QueueApp
+namespace QueueManagement.Features.VirtualWaitingRoom
 {
     /// <summary>
     /// Represents a participant in the virtual waiting room.
