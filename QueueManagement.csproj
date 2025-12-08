@@ -6,6 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="QueueApp.Tests\**\*.cs" />
+    <Compile Remove="QueueManagement.Tests\**\*.cs" />
   </ItemGroup>
 </Project>
