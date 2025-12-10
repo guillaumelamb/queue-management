@@ -109,14 +109,6 @@ namespace QueueManagement.Tests.Benchmarks
             }
         }
 
-        [IterationSetup]
-        public async Task IterationSetup()
-        {
-            // Clear queue entries before each iteration for lottery benchmark
-            // Note: In-memory implementation doesn't have DeleteByEventAsync, so we'll skip this
-            // The lottery will check HasRanksAsync and skip if already computed
-        }
-
         [Benchmark]
         public async Task<JobResult> ComputeQueueRanks_Lottery()
         {

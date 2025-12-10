@@ -89,23 +89,19 @@ namespace QueueManagement.Tests.Benchmarks
             _userIndex = 0;
         }
 
-        [IterationSetup]
-        public async Task IterationSetup()
+        [Benchmark]
+        public async Task<bool> CreateReservation()
         {
-            // Reset queue entries to invited status for each iteration
             var userId = _userIds[_userIndex % _userIds.Length];
+            
+            // Reset queue entry to invited status before benchmark
             var queueEntry = await _queueEntryRepository.GetByEventAndUserAsync(_eventId, userId);
             if (queueEntry != null)
             {
                 queueEntry.Status = QueueEntryStatus.Invited;
                 await _queueEntryRepository.UpdateAsync(queueEntry);
             }
-        }
-
-        [Benchmark]
-        public async Task<bool> CreateReservation()
-        {
-            var userId = _userIds[_userIndex % _userIds.Length];
+            
             _userIndex++;
 
             var result = await _reservationService.CreateReservationAsync(_eventId, userId);
