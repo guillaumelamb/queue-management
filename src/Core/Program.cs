@@ -154,7 +154,21 @@ namespace QueueManagement.Core
             }
         }
 
-        public override string ToString() => $"Queue[{count}]";
+        public override string ToString()
+        {
+            if (count == 0)
+                return "Queue: []";
+
+            var items = new string[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                var item = buffer[(head + i) & (buffer.Length - 1)];
+                items[i] = item?.ToString() ?? "null";
+            }
+
+            return $"Queue: [{string.Join(", ", items)}]";
+        }
 
         #region Private Methods
 
