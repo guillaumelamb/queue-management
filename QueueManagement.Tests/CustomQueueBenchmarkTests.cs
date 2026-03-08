@@ -73,35 +73,35 @@ public class CustomQueueBenchmarkTests
     [InlineData(100_000)]
     public void Benchmark_CompareWithNativeQueue(int count)
     {
-        // CustomQueue
-        var customQueue = new CustomQueue<string>();
-        var stopwatch = Stopwatch.StartNew();
+        // Warm both implementations before measuring so JIT and first-use costs do not dominate.
+        MeasureCustomQueueRoundTrip(256);
+        MeasureNativeQueueRoundTrip(256);
 
-        for (int i = 0; i < count; i++)
-            customQueue.Enqueue($"Item {i}");
-        while (!customQueue.IsEmpty())
-            customQueue.Dequeue();
+        const int measuredRuns = 4;
+        var customTicks = new long[measuredRuns];
+        var nativeTicks = new long[measuredRuns];
 
-        stopwatch.Stop();
-        var customTicks = stopwatch.ElapsedTicks;
+        for (int run = 0; run < measuredRuns; run++)
+        {
+            if (run % 2 == 0)
+            {
+                customTicks[run] = MeasureCustomQueueRoundTrip(count);
+                nativeTicks[run] = MeasureNativeQueueRoundTrip(count);
+            }
+            else
+            {
+                nativeTicks[run] = MeasureNativeQueueRoundTrip(count);
+                customTicks[run] = MeasureCustomQueueRoundTrip(count);
+            }
+        }
 
-        // Native Queue<T>
-        var nativeQueue = new Queue<string>();
-        stopwatch.Restart();
-
-        for (int i = 0; i < count; i++)
-            nativeQueue.Enqueue($"Item {i}");
-        while (nativeQueue.Count > 0)
-            nativeQueue.Dequeue();
-
-        stopwatch.Stop();
-        var nativeTicks = stopwatch.ElapsedTicks;
-
-        var ratio = (double)customTicks / nativeTicks;
+        var customAverage = customTicks.Average();
+        var nativeAverage = nativeTicks.Average();
+        var ratio = customAverage / nativeAverage;
 
         _output.WriteLine($"Count: {count:N0}");
-        _output.WriteLine($"  CustomQueue: {customTicks:N0} ticks");
-        _output.WriteLine($"  Native Queue<T>: {nativeTicks:N0} ticks");
+        _output.WriteLine($"  CustomQueue avg: {customAverage:N0} ticks");
+        _output.WriteLine($"  Native Queue<T> avg: {nativeAverage:N0} ticks");
         _output.WriteLine($"  Ratio: {ratio:F2}x");
 
         // Shared CI runners are noisier than local machines, so keep a wider regression guard there.
@@ -131,5 +131,35 @@ public class CustomQueueBenchmarkTests
         // Keep a looser bound on shared runners where clock noise is higher.
         var maxAllowedTicks = IsCiEnvironment ? 1_000.0 : 100.0;
         Assert.True(avgTicks < maxAllowedTicks, $"Peek avg is {avgTicks:F2} ticks, expected < {maxAllowedTicks:F0} (O(1))");
+    }
+
+    private static long MeasureCustomQueueRoundTrip(int count)
+    {
+        var queue = new CustomQueue<int>(count);
+        var stopwatch = Stopwatch.StartNew();
+
+        for (int i = 0; i < count; i++)
+            queue.Enqueue(i);
+
+        while (!queue.IsEmpty())
+            queue.Dequeue();
+
+        stopwatch.Stop();
+        return stopwatch.ElapsedTicks;
+    }
+
+    private static long MeasureNativeQueueRoundTrip(int count)
+    {
+        var queue = new Queue<int>(count);
+        var stopwatch = Stopwatch.StartNew();
+
+        for (int i = 0; i < count; i++)
+            queue.Enqueue(i);
+
+        while (queue.Count > 0)
+            queue.Dequeue();
+
+        stopwatch.Stop();
+        return stopwatch.ElapsedTicks;
     }
 }
