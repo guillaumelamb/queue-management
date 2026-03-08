@@ -219,10 +219,10 @@ GitHub Actions now runs restore, build, and unit tests for every push and pull r
 
 - The default CI test command excludes timing-sensitive benchmark tests with `--filter "Category!=Benchmark"`.
 - CI also runs the lightweight benchmark test suite with `--filter "Category=Benchmark"` and includes it in the published report.
-- On pushes to the repository default branch, the workflow publishes an HTML test report to GitHub Pages.
+- On pushes to the repository default branch, the workflow publishes an HTML test report to GitHub Pages after GitHub Pages has been enabled for the repository.
 - The deployed Pages job exposes the report URL directly in the Actions UI as the environment link and in the job summary.
 
-If GitHub Pages is not already configured for the repository, set the Pages source to `GitHub Actions` in repository settings.
+If GitHub Pages is not already configured for the repository, open repository `Settings > Pages`, then set the source to `GitHub Actions`. Until that is enabled, the deploy job is skipped instead of failing.
 
 For deeper performance analysis beyond the CI benchmark checks, run the full BenchmarkDotNet suite manually:
 
