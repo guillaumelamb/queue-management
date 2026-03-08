@@ -107,7 +107,7 @@ dotnet build QueueManagement.sln
 
 ### Run Tests
 ```bash
-dotnet test QueueManagement.sln
+dotnet test QueueManagement.sln --filter "Category!=Benchmark"
 ```
 
 ### Run Simulation
@@ -195,14 +195,14 @@ Typical throughput: **10,000+ joins/second** on modern hardware
 The project includes comprehensive tests:
 
 ```bash
-# Run all tests
-dotnet test
+# Run CI-aligned tests
+dotnet test --filter "Category!=Benchmark"
 
 # Run with coverage
-dotnet test --collect:"XPlat Code Coverage"
+dotnet test --filter "Category!=Benchmark" --collect:"XPlat Code Coverage"
 
-# Run benchmarks
-dotnet test --filter "Benchmark"
+# Run benchmark-only tests
+dotnet test --filter "Category=Benchmark"
 ```
 
 Tests cover:
@@ -212,6 +212,23 @@ Tests cover:
 - Session expiration and cleanup
 - Anti-bot IP limiting
 - Event emission and status tracking
+
+## CI And Test Report
+
+GitHub Actions now runs restore, build, and unit tests for every push and pull request.
+
+- The default CI test command excludes timing-sensitive benchmark tests with `--filter "Category!=Benchmark"`.
+- CI also runs the lightweight benchmark test suite with `--filter "Category=Benchmark"` and includes it in the published report.
+- On pushes to the repository default branch, the workflow publishes an HTML test report to GitHub Pages.
+- The deployed Pages job exposes the report URL directly in the Actions UI as the environment link and in the job summary.
+
+If GitHub Pages is not already configured for the repository, set the Pages source to `GitHub Actions` in repository settings.
+
+For deeper performance analysis beyond the CI benchmark checks, run the full BenchmarkDotNet suite manually:
+
+```bash
+dotnet run -c Release --project QueueManagement.Tests -- --filter *
+```
 
 ## 🐛 Troubleshooting
 
