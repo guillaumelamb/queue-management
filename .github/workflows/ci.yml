@@ -86,8 +86,11 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-          $publicationStatus = if ('${{ github.event_name }}' -eq 'push' -and '${{ github.ref_name }}' -eq '${{ github.event.repository.default_branch }}') {
+          $publicationStatus = if ('${{ github.event_name }}' -eq 'push' -and '${{ github.ref_name }}' -eq '${{ github.event.repository.default_branch }}' -and '${{ github.event.repository.has_pages }}' -eq 'true') {
             'queued for GitHub Pages deployment'
+          }
+          elseif ('${{ github.event_name }}' -eq 'push' -and '${{ github.ref_name }}' -eq '${{ github.event.repository.default_branch }}') {
+            'skipped because GitHub Pages is not enabled yet; enable it in repository Settings > Pages and choose GitHub Actions as the source'
           }
           else {
             'skipped because this is not a push to the default branch'
@@ -131,7 +134,7 @@ jobs:
 
   deploy-report:
     name: Deploy test report
-    if: always() && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    if: always() && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch && github.event.repository.has_pages == true
     needs: build-test
     runs-on: ubuntu-latest
     permissions:
